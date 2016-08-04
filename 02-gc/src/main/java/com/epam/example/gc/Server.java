@@ -15,7 +15,6 @@ public class Server {
 
     private int port;
     private ServerSocket server;
-    private Socket socket;
     private DataOutputStream os;
     private DataInputStream is;
     private ReentrantLock lock = new ReentrantLock();
@@ -26,18 +25,21 @@ public class Server {
 
     public void start() throws IOException {
     	server = new ServerSocket(port);
-    	socket = server.accept();
-    	os = new DataOutputStream(socket.getOutputStream());
-        is = new DataInputStream(socket.getInputStream());
+    	createStreams(server.accept());
     	
         while (true) {
             readMessage();
         }
     }
 
+	private void createStreams(Socket socket) throws IOException {
+		os = new DataOutputStream(socket.getOutputStream());
+        is = new DataInputStream(socket.getInputStream());
+	}
+
     private void readMessage() throws IOException {
-        for (int i = 0; i < is.readInt(); i++) {
-            byte[] bytes = new byte[is.readInt()];
+        for (int i = 0, length = is.readInt(); i < length; i++) {
+        	byte[] bytes = new byte[is.readInt()];
             is.readFully(bytes);
             startNewThread(bytes, i);
         }

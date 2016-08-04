@@ -42,7 +42,6 @@ public class ServerTest {
         for (int i = 0; i < length; i++) {
             sb.append(i % 5 == 0 ? ' ' : 'x');
         }
-        sb.append(length);
         return sb.toString();
     }
 
