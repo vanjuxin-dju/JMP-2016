@@ -1,23 +1,21 @@
 package com.epam.example.classloading;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-public class AnimalClassLoader extends ClassLoader {
-	static Logger LOG = Logger.getLogger(AnimalClassLoader.class);
+public class CustomClassLoader extends URLClassLoader {
+	private static final Logger LOG = Logger.getLogger(CustomClassLoader.class);
 	private Map<String, Class<?>> classes = new HashMap<>();
 
-	public AnimalClassLoader() {
-		this(AnimalClassLoader.class.getClassLoader());
+	public CustomClassLoader(URL[] urls) {
+		super(urls);
 	}
 
-	public AnimalClassLoader(ClassLoader parent) {
-		super(parent);
-	}
-	
-	public void defineClass(String name, Class<?> clazz) {
+	private void defineClass(String name, Class<?> clazz) {
         classes.put(name, clazz);
     }
 
@@ -26,6 +24,7 @@ public class AnimalClassLoader extends ClassLoader {
 		Class<?> result = findLoadedClass(name);
         if (result != null) {
         	LOG.info(name + " found from loaded classes");
+        	defineClass(result.getName(), result);
             return result;
         }
         try {
@@ -35,6 +34,13 @@ public class AnimalClassLoader extends ClassLoader {
         }
         if (result != null) {
         	LOG.info(name + " found from system classes");
+        	defineClass(result.getName(), result);
+            return result;
+        }
+        result = super.findClass(name);
+        if (result != null) {
+        	LOG.info(name + " found from superclass classloader");
+        	defineClass(result.getName(), result);
             return result;
         }
         result = classes.get(name);
@@ -49,11 +55,14 @@ public class AnimalClassLoader extends ClassLoader {
 	protected Class<?> loadClass(String name, boolean resolve)
 			throws ClassNotFoundException {
 		LOG.info("Loading class " + name);
+		Class<?> clazz = null;
 		try {
-			return findClass(name);
+			clazz = findClass(name);
 		} catch (ClassNotFoundException ex) {
-			return super.loadClass(name, resolve);
+			clazz = super.loadClass(name, resolve);
+			defineClass(clazz.getName(), clazz);
 		}
+		return clazz;
 	}
 
 	@Override
@@ -61,5 +70,5 @@ public class AnimalClassLoader extends ClassLoader {
 		return "Custom classloader for animals";
 	}
 	
-	
+
 }
