@@ -16,16 +16,19 @@ import com.epam.example.classloading.animals.Animal;
 public class App {
 	private static final Logger LOG = Logger.getLogger(App.class);
 	
-	private static final String PATH = "C:\\Users\\Dzmitry_Vaniukhin\\git\\JMP-2016\\03-classloading\\classloading-api-impl\\target\\classloading-api-impl-0.0.1-SNAPSHOT.jar";
+	private static final String PATH = "\\..\\classloading-api-impl\\target\\classloading-api-impl-0.0.1-SNAPSHOT.jar";
 	
 	private static final String CLASS_EXT = ".class";
 	
 	private static final String PACKAGE = Animal.class.getPackage().getName();
 	
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
-		ClassLoader cl = new CustomClassLoader(new URL[] { new File(PATH).toURI().toURL() });
+		File file = new File(System.getProperty("user.dir") + PATH);
+		
+		ClassLoader cl = new CustomClassLoader(new URL[] { file.toURI().toURL() });
 		Thread.currentThread().setContextClassLoader(cl);
-		List<String> classNames = loadClassNames(PATH);
+		
+		List<String> classNames = loadClassNames(file.getCanonicalPath());
 		
 		Animal[] animals = new Animal[8];
 		for (int i = 0; i < animals.length; i++) {
