@@ -22,7 +22,7 @@ public class ClientController {
 	@Autowired
 	private ClientService service;
 	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
 	@ResponseBody
 	public Client[] getAllClients() {
 		List<Client> clients = service.clientAll();
@@ -43,7 +43,7 @@ public class ClientController {
 		return "";
 	}
 	
-	@RequestMapping(value = "/", method = RequestMethod.POST)
+	@RequestMapping(value = {"", "/"}, method = RequestMethod.POST)
 	@ResponseBody
 	public Long createClient(@RequestBody MultiValueMap<String, String> body, HttpServletResponse resp) {
 		resp.setStatus(201);

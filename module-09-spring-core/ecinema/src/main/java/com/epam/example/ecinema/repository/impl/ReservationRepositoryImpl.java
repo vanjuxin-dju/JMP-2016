@@ -21,7 +21,7 @@ public class ReservationRepositoryImpl extends AbstractBaseRepository<Reservatio
 	public List<Reservation> findByDate(Date date) {
 		Criteria cr = getSession()
 				.createCriteria(Reservation.class, "reservations")
-				.add(Restrictions.eq("res_date", date));
+				.add(Restrictions.eq("date", date));
 		return cr.list();
 	}
 	

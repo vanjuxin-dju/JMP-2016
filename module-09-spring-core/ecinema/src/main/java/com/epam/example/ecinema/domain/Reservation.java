@@ -26,7 +26,7 @@ public class Reservation {
 	private String filmName;
 	
 	@Column(name = "res_date")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 	
 	@Column(name = "seat")

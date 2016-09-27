@@ -18,8 +18,8 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<Client> impleme
 		@SuppressWarnings("deprecation")
 		Criteria cr = getSession()
 				.createCriteria(Client.class, "clients")
-				.add(Restrictions.eq("first_name", firstName))
-				.add(Restrictions.eq("last_name", lastName));
+				.add(Restrictions.eq("firstName", firstName))
+				.add(Restrictions.eq("lastName", lastName));
 		return (Client) cr.uniqueResult();
 	}
 
