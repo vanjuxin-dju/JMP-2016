@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import com.epam.example.ecinema.domain.Client;
 import com.epam.example.ecinema.domain.Reservation;
 import com.epam.example.ecinema.service.ClientService;
 import com.epam.example.ecinema.service.ReservationService;
+import com.epam.example.ecinema.web.exception.ForbiddenException;
 import com.epam.example.ecinema.web.exception.NotAcceptableException;
 
 @Controller
@@ -46,7 +48,10 @@ public class ReservationController {
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public String deleteReservation(@PathVariable("id") Long id, HttpServletResponse resp) {
+	public String deleteReservation(@PathVariable("id") Long id, HttpServletResponse resp, HttpSession session) {
+		if (session.getAttribute("loginSession") == null) {
+			throw new ForbiddenException();
+		}
 		resp.setStatus(204);
 		service.removeReservationById(id);
 		return "";
@@ -54,7 +59,10 @@ public class ReservationController {
 	
 	@RequestMapping(value = {"", "/"}, method = RequestMethod.POST)
 	@ResponseBody
-	public Long createReservation(@RequestBody MultiValueMap<String, String> body, HttpServletResponse resp) {
+	public Long createReservation(@RequestBody MultiValueMap<String, String> body, HttpServletResponse resp, HttpSession session) {
+		if (session.getAttribute("loginSession") == null) {
+			throw new ForbiddenException();
+		}
 		resp.setStatus(201);
 		Long id = 0L;
 		Reservation reservation = new Reservation();
@@ -78,7 +86,10 @@ public class ReservationController {
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	@ResponseBody
-	public String updateReservation(@PathVariable("id") Long id, @RequestBody MultiValueMap<String, String> body, HttpServletResponse resp) {
+	public String updateReservation(@PathVariable("id") Long id, @RequestBody MultiValueMap<String, String> body, HttpServletResponse resp, HttpSession session) {
+		if (session.getAttribute("loginSession") == null) {
+			throw new ForbiddenException();
+		}
 		Reservation reservation = new Reservation();
 		reservation.setId(id);
 		reservation.setFilmName(body.getFirst("filmName"));
